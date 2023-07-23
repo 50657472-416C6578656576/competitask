@@ -4,6 +4,10 @@ from pydantic import BaseModel, Field, EmailStr
 from datetime import date
 
 
+class Message(BaseModel):
+    message: str
+
+
 class DayOfTheWeek(StrEnum):
     monday = auto()
     tuesday = auto()
@@ -30,6 +34,13 @@ class UserSchemaResponse(BaseModel):
     nickname: str
     email: EmailStr
     password: str
+
+
+class AvailableSignupDataSchemeResponse(BaseModel):
+    available: bool
+    taken_email: bool = False
+    taken_nickname: bool = False
+    message: str | None = None
 
 
 class MakeListRequest(BaseModel):
