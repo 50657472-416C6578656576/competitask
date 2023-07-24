@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, select, MetaData
+from sqlalchemy import create_engine, select, MetaData, or_
 from sqlalchemy.orm import Session
 from sqlalchemy_utils import database_exists, create_database
 import uuid
@@ -29,7 +29,7 @@ def add_user(user: SignupSchemaRequest):
 def select_user(nickname: str | None, email: str | None):
     with Session(engine) as session:
         if nickname and email:
-            stmt = select(User).where(User.nickname == nickname or User.email == email)
+            stmt = select(User).where(or_(User.nickname == nickname, User.email == email))
         elif nickname:
             stmt = select(User).where(User.nickname == nickname)
         elif email:
