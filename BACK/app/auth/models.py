@@ -1,5 +1,8 @@
-from sqlalchemy import String, Integer, DateTime, create_engine, MetaData
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import String, Integer, DateTime, create_engine, ForeignKey, Boolean
+from sqlalchemy.orm import DeclarativeBase, mapped_column, relationship
+
+from app.auth.schemas import UserSchemaResponse
+from app.engine import engine
 
 
 class Base(DeclarativeBase):
@@ -9,27 +12,15 @@ class Base(DeclarativeBase):
 class User(Base):
     __tablename__ = "user"
     user_id = mapped_column(String, primary_key=True)
-    nickname = mapped_column(String(30), unique=True)
-    email = mapped_column(String, unique=True)
+    username = mapped_column(String(30), unique=True, nullable=False)
+    email = mapped_column(String, unique=True, nullable=False)
     password = mapped_column(String)
 
-    def __repr__(self) -> str:
-        return f"User(nickname={self.nickname!r}, email={self.email!r}, id={self.user_id!r})"
-
-
-class Task(Base):
-    __tablename__ = "task"
-    task_id = mapped_column(String, primary_key=True)
-    parent_id = mapped_column(String)
-    title = mapped_column(String(100))
-    description = mapped_column(String)
-    update = mapped_column(Integer)
-    expire = mapped_column(DateTime)
+    def schema(self):
+        return UserSchemaResponse(user_id=self.user_id, email=self.email, username=self.username)
 
     def __repr__(self) -> str:
-        return f"User(title={self.title!r}, task_id={self.task_id!r}, parent_id={self.parent_id!r})"
+        return f"User(username={self.username!r}, email={self.email!r}, id={self.user_id!r})"
 
 
-url = 'sqlite:///competask.db'
-engine = create_engine(url, echo=True)
 Base.metadata.create_all(engine)
