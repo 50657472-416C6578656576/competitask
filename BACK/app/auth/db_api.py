@@ -6,19 +6,15 @@ import uuid
 from app.auth.schemas import SignupSchemaRequest, UserSchemaResponse
 from app.auth.security_utils import get_hashed_password
 from app.auth.models import User
-
-url = 'sqlite:///competask.db'
-if not database_exists(url):
-    create_database(url)
-engine = create_engine(url, echo=True)
+from app.engine import engine
 
 
-def add_user(user: SignupSchemaRequest):
+async def add_user(user: SignupSchemaRequest):
     with Session(engine) as session:
         user_id = str(uuid.uuid4())
         new_user = User(
             user_id=user_id,
-            nickname=user.nickname,
+            username=user.username,
             email=user.email,
             password=get_hashed_password(user.password),
         )
@@ -27,24 +23,26 @@ def add_user(user: SignupSchemaRequest):
         return user_id
 
 
-def select_user(nickname: str | None, email: str | None):
+async def select_user(username: str | None = None, email: str | None = None, user_id: str | None = None):
     with Session(engine) as session:
-        if nickname and email:
-            stmt = select(User).where(or_(User.nickname == nickname, User.email == email))
-        elif nickname:
-            stmt = select(User).where(User.nickname == nickname)
+        if username and email:
+            stmt = select(User).where(or_(User.username == username, User.email == email))
+        elif username:
+            stmt = select(User).where(User.username == username)
         elif email:
             stmt = select(User).where(User.email == email)
+        elif user_id:
+            stmt = select(User).where(User.user_id == user_id)
         else:
             return
-        return session.execute(stmt).first()
+        return session.execute(stmt).all()
 
 
-def select_all_users():
+async def select_all_users():
     with Session(engine) as session:
         res = []
         stmt = select(User)
         for row in session.execute(stmt):
             user = row[0]
-            res.append(UserSchemaResponse(nickname=user.nickname, email=user.email, user_id=user.user_id))
+            res.append(UserSchemaResponse(username=user.username, email=user.email, user_id=user.user_id))
         return res

@@ -8,7 +8,7 @@ class Message(BaseModel):
 
 
 class SignupSchemaRequest(BaseModel):
-    nickname: str
+    username: str
     email: EmailStr
     password: str
 
@@ -18,8 +18,18 @@ class LoginSchemaRequest(BaseModel):
     password: str
 
 
-class AvailableSignupDataSchemeResponse(BaseModel):
-    available: bool
-    taken_email: bool = False
-    taken_nickname: bool = False
+class ValidationResult(BaseModel):
+    valid: bool
     message: str | None = None
+
+
+class AvailableSignupDataSchemaResponse(BaseModel):
+    
+    email: ValidationResult
+    username: ValidationResult
+
+
+class UserSchemaResponse(BaseModel):
+    user_id: str
+    username: str
+    email: EmailStr

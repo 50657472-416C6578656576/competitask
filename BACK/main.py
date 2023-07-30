@@ -2,13 +2,14 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Response, Request
 from starlette.responses import JSONResponse
 
-from app import auth
+from app import auth, task
 from app.auth.schemas import UserSchemaResponse
 import app.auth.db_api as db
 
 
 app = FastAPI()
 app.include_router(auth.router)
+app.include_router(task.router)
 
 
 @app.get("/")
@@ -29,7 +30,7 @@ async def get_users():
 
 @app.get("/get_cookies")
 async def get_cookies(request: Request):
-    return request.cookies.get("token")
+    return request.cookies.get("access_token")
 
 
 if __name__ == "__main__":
