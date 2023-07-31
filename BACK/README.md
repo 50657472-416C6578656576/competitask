@@ -10,6 +10,8 @@ python -m venv ./environment
 
 . ./environment/bin/activate
 
+pip install -r requirements.txt
+
 uvicorn main:app --reload --host 0.0.0.0
 
 #### good luck going to 0.0.0.0:8000/docs and have fun!
