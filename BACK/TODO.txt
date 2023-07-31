@@ -1,0 +1,16 @@
+Better dev:
+1. add handlers for testing
+2. build tests for CI
+3. make CI/CD
+
+product:
+1. fix num subtasks
+2. add completion mechanic
+3. add refreshing and deactivation mechanic to tasks
+4. add private field
+5. add challenges
+
+thoughts & ideas:
+how do profiles should look like?
+chatting and commenting?
+ddos attacks?

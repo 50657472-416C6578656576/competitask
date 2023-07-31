@@ -1,6 +1,5 @@
-from fastapi import APIRouter, HTTPException, Response, Request, Depends
+from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
-from validate_email import validate_email
 
 from app.auth.routers import proper_token
 from app.auth.db_api import select_user
@@ -25,7 +24,7 @@ async def set_tasks(tasks: list[TaskSchemaRequest], request: Request):
     return True
 
 
-@router.get("get_tasks")
+@router.get("/get_tasks", response_model=list[TaskSchemaResponse])
 async def get_tasks(request: Request):
     user_data = await proper_token(request)
     if not (user_data and (await select_user(user_id=user_data["user_id"]))):
@@ -33,11 +32,3 @@ async def get_tasks(request: Request):
 
     tasks = await select_tasks(user_id=user_data["user_id"])
     return tree_from_list(tasks=tasks)
-
-"""
-TO DO: 
-fix num subtasks
-add refreshing
-add deactivation
-
-"""
